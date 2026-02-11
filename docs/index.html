@@ -557,12 +557,37 @@
             border: 1px solid rgba(0,0,0,0.04);
             opacity: 0;
             transform: translateY(20px);
+            display: flex;
+            flex-direction: column;
+            max-height: 520px;
         }
 
         .table-card.visible {
             opacity: 1;
             transform: translateY(0);
             transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .table-scroll {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .table-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .table-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: var(--brand-grey-light);
+            border-radius: 3px;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--brand-grey-medium);
         }
 
         .leads-table {
@@ -583,6 +608,9 @@
             white-space: nowrap;
             cursor: default;
             user-select: none;
+            position: sticky;
+            top: 0;
+            z-index: 2;
         }
 
         .leads-table thead th.sortable {
@@ -1326,6 +1354,7 @@
 
         <!-- LEADS TABLE -->
         <div class="table-card" data-delay="560">
+          <div class="table-scroll">
             <table class="leads-table">
                 <thead>
                     <tr>
@@ -1342,6 +1371,7 @@
                 </thead>
                 <tbody id="leadsTableBody"></tbody>
             </table>
+          </div>
         </div>
     </main>
 
