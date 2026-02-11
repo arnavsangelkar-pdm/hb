@@ -676,6 +676,104 @@
         .status-badge.won { background: var(--status-won-bg); color: var(--status-won); }
         .status-badge.lost { background: var(--status-lost-bg); color: var(--status-lost); }
 
+        .designs-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .designs-badge.shared {
+            background: rgba(0, 102, 204, 0.1);
+            color: var(--brand-primary);
+        }
+
+        .designs-badge.not-shared {
+            background: var(--bg-body);
+            color: var(--brand-grey-medium);
+        }
+
+        .designs-detail {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.06), rgba(2, 142, 209, 0.06));
+            border: 1px solid rgba(0, 102, 204, 0.12);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 6px;
+        }
+
+        .designs-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .designs-detail-header i {
+            color: var(--brand-primary);
+            font-size: 1rem;
+        }
+
+        .designs-detail-header span {
+            font-weight: 600;
+            color: var(--brand-black);
+            font-size: 0.88rem;
+        }
+
+        .designs-file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .designs-file {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+        }
+
+        .designs-file i {
+            color: var(--brand-secondary);
+            font-size: 0.9rem;
+            width: 16px;
+            text-align: center;
+        }
+
+        .designs-file-name {
+            flex: 1;
+            font-weight: 500;
+            color: var(--brand-grey-dark);
+        }
+
+        .designs-file-date {
+            font-size: 0.72rem;
+            color: var(--brand-grey-medium);
+        }
+
+        .designs-not-shared {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            background: var(--bg-body);
+            border: 1px dashed var(--brand-grey-light);
+            border-radius: var(--radius-md);
+            margin-top: 6px;
+            color: var(--brand-grey-medium);
+            font-size: 0.85rem;
+        }
+
+        .designs-not-shared i {
+            font-size: 1.1rem;
+        }
+
         .budget-cell {
             font-weight: 600;
             color: var(--brand-black);
@@ -1236,6 +1334,7 @@
                         <th>Project Type</th>
                         <th>Location</th>
                         <th class="sortable" data-column="budget">Est. Budget <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th>Designs</th>
                         <th class="sortable sorted" data-column="leadScore">Lead Score <i class="fa-solid fa-sort-down sort-icon"></i></th>
                         <th>Status</th>
                         <th class="sortable" data-column="dateAdded">Date <i class="fa-solid fa-sort sort-icon"></i></th>
@@ -1283,8 +1382,16 @@
             estimatedBudget: 285000, timeline: "Q2 2026", timelineUrgency: "high",
             productsInterested: ["PVC Column Wraps", "Exterior Moulding", "Decorative Brackets"],
             sqFootage: 4200,
-            status: "qualified", dateAdded: "2026-01-15", leadScore: 92,
-            scoreBreakdown: { budget: 18, location: 20, professionalType: 19, timeline: 14, productFit: 13, relationship: 8 },
+            status: "qualified", dateAdded: "2026-01-15", leadScore: 91,
+            scoreBreakdown: { designsShared: 27, budget: 14, location: 15, professionalType: 14, timeline: 9, productFit: 8, relationship: 4 },
+            designsShared: {
+                shared: true,
+                files: [
+                    { name: "Column_Wrap_Specs_PB.dwg", type: "cad", date: "2026-01-22" },
+                    { name: "Moulding_Profiles_v2.pdf", type: "pdf", date: "2026-01-28" },
+                    { name: "Porch_Elevation_Render.pdf", type: "pdf", date: "2026-02-01" }
+                ]
+            },
             interactions: [
                 { date: "2026-01-15", type: "inbound", title: "Website form submission", description: "Requested quote for PVC exterior moulding for 12,000 sqft coastal estate." },
                 { date: "2026-01-16", type: "call", title: "Initial discovery call", description: "Discussed project scope. 42 windows needing surrounds, full porch column package." },
@@ -1304,8 +1411,17 @@
             estimatedBudget: 425000, timeline: "Q1 2026", timelineUrgency: "high",
             productsInterested: ["Stain Series Ceiling", "Pergola Systems", "Column Wraps", "Louvers"],
             sqFootage: 8500,
-            status: "proposal", dateAdded: "2025-12-10", leadScore: 96,
-            scoreBreakdown: { budget: 20, location: 18, professionalType: 20, timeline: 15, productFit: 14, relationship: 9 },
+            status: "proposal", dateAdded: "2025-12-10", leadScore: 97,
+            scoreBreakdown: { designsShared: 30, budget: 15, location: 14, professionalType: 15, timeline: 10, productFit: 9, relationship: 4 },
+            designsShared: {
+                shared: true,
+                files: [
+                    { name: "Resort_Pergola_CAD.dwg", type: "cad", date: "2025-12-20" },
+                    { name: "Column_Layout_Floor1-3.dwg", type: "cad", date: "2025-12-20" },
+                    { name: "Exterior_Millwork_Schedule.xlsx", type: "spreadsheet", date: "2026-01-05" },
+                    { name: "Louver_Specs_Caribbean.pdf", type: "pdf", date: "2026-01-08" }
+                ]
+            },
             interactions: [
                 { date: "2025-12-10", type: "inbound", title: "Referral from Kenneth Blackwell", description: "Architect colleague referred for Caribbean resort project." },
                 { date: "2025-12-12", type: "call", title: "Discovery call", description: "Discussed 45-room resort renovation. Major exterior millwork overhaul." },
@@ -1325,8 +1441,9 @@
             estimatedBudget: 178000, timeline: "Q2 2026", timelineUrgency: "medium",
             productsInterested: ["Exterior Moulding", "Rafter Tails", "Soffit Ceiling"],
             sqFootage: 3800,
-            status: "contacted", dateAdded: "2026-01-20", leadScore: 84,
-            scoreBreakdown: { budget: 16, location: 20, professionalType: 16, timeline: 12, productFit: 12, relationship: 8 },
+            status: "contacted", dateAdded: "2026-01-20", leadScore: 58,
+            scoreBreakdown: { designsShared: 0, budget: 13, location: 15, professionalType: 12, timeline: 8, productFit: 8, relationship: 2 },
+            designsShared: { shared: false, files: [] },
             interactions: [
                 { date: "2026-01-20", type: "inbound", title: "Trade show contact", description: "Met at Southeast Builders Conference. Interested in coastal millwork." },
                 { date: "2026-01-25", type: "email", title: "Follow-up email with catalog", description: "Sent digital catalog and project portfolio for coastal homes." },
@@ -1344,8 +1461,15 @@
             estimatedBudget: 92000, timeline: "Q3 2026", timelineUrgency: "medium",
             productsInterested: ["Decorative Brackets", "Column Wraps", "Exterior Moulding"],
             sqFootage: 2200,
-            status: "qualified", dateAdded: "2026-01-08", leadScore: 71,
-            scoreBreakdown: { budget: 12, location: 18, professionalType: 12, timeline: 10, productFit: 11, relationship: 8 },
+            status: "qualified", dateAdded: "2026-01-08", leadScore: 72,
+            scoreBreakdown: { designsShared: 22, budget: 10, location: 13, professionalType: 9, timeline: 7, productFit: 7, relationship: 4 },
+            designsShared: {
+                shared: true,
+                files: [
+                    { name: "Historic_Bracket_Profiles.pdf", type: "pdf", date: "2026-01-28" },
+                    { name: "Inn_Exterior_Elevation.dwg", type: "cad", date: "2026-02-02" }
+                ]
+            },
             interactions: [
                 { date: "2026-01-08", type: "inbound", title: "Website inquiry", description: "Asked about historically-accurate PVC moulding profiles." },
                 { date: "2026-01-12", type: "call", title: "Consultation call", description: "Restoring 1890s coastal inn. Needs maintenance-free exterior elements." },
@@ -1365,7 +1489,17 @@
             productsInterested: ["Stain Series Ceiling", "Exterior Moulding", "Column Wraps", "Grilles", "Pergola Systems"],
             sqFootage: 12000,
             status: "proposal", dateAdded: "2025-11-28", leadScore: 98,
-            scoreBreakdown: { budget: 20, location: 20, professionalType: 15, timeline: 15, productFit: 15, relationship: 13 },
+            scoreBreakdown: { designsShared: 30, budget: 15, location: 15, professionalType: 11, timeline: 10, productFit: 10, relationship: 5 },
+            designsShared: {
+                shared: true,
+                files: [
+                    { name: "Condo_Exterior_Full_Package.dwg", type: "cad", date: "2025-12-05" },
+                    { name: "Wind_Load_Specifications.pdf", type: "pdf", date: "2025-12-18" },
+                    { name: "Pergola_Rooftop_Design.dwg", type: "cad", date: "2025-12-22" },
+                    { name: "Grille_Pattern_Selections.pdf", type: "pdf", date: "2026-01-05" },
+                    { name: "Phased_Delivery_Schedule.xlsx", type: "spreadsheet", date: "2026-01-10" }
+                ]
+            },
             interactions: [
                 { date: "2025-11-28", type: "inbound", title: "RFP received", description: "Formal RFP for 36-unit oceanfront condo development exterior millwork." },
                 { date: "2025-12-05", type: "meeting", title: "Site visit", description: "Toured construction site. Impressive scale. Direct ocean exposure." },
@@ -1385,8 +1519,9 @@
             estimatedBudget: 145000, timeline: "Q2 2026", timelineUrgency: "medium",
             productsInterested: ["Pergola Systems", "Trellis Systems", "Decorative Brackets"],
             sqFootage: 3200,
-            status: "contacted", dateAdded: "2026-01-28", leadScore: 78,
-            scoreBreakdown: { budget: 14, location: 20, professionalType: 18, timeline: 12, productFit: 10, relationship: 4 },
+            status: "contacted", dateAdded: "2026-01-28", leadScore: 48,
+            scoreBreakdown: { designsShared: 0, budget: 11, location: 15, professionalType: 13, timeline: 8, productFit: 7, relationship: 2 },
+            designsShared: { shared: false, files: [] },
             interactions: [
                 { date: "2026-01-28", type: "inbound", title: "Email inquiry", description: "Researching PVC pergola systems for oceanfront beach club." },
                 { date: "2026-02-01", type: "call", title: "Intro call", description: "Beach club needs complete outdoor structure renovation. Storm damage." },
@@ -1405,7 +1540,14 @@
             productsInterested: ["Column Wraps", "Exterior Moulding", "Soffit Ceiling", "Decorative Brackets", "Louvers"],
             sqFootage: 7500,
             status: "qualified", dateAdded: "2025-12-20", leadScore: 88,
-            scoreBreakdown: { budget: 20, location: 20, professionalType: 16, timeline: 14, productFit: 12, relationship: 6 },
+            scoreBreakdown: { designsShared: 24, budget: 15, location: 15, professionalType: 12, timeline: 10, productFit: 9, relationship: 3 },
+            designsShared: {
+                shared: true,
+                files: [
+                    { name: "Marina_Village_Masterplan.dwg", type: "cad", date: "2026-01-15" },
+                    { name: "Caribbean_Column_Details.pdf", type: "pdf", date: "2026-01-20" }
+                ]
+            },
             interactions: [
                 { date: "2025-12-20", type: "inbound", title: "Website form — commercial project", description: "Inquired about commercial-scale millwork for marina village development." },
                 { date: "2025-12-23", type: "call", title: "Executive intro call", description: "12-building marina village. Caribbean architectural style. Major millwork scope." },
@@ -1424,8 +1566,9 @@
             estimatedBudget: 62000, timeline: "Q3 2026", timelineUrgency: "low",
             productsInterested: ["Exterior Moulding", "Soffit Ceiling"],
             sqFootage: 1800,
-            status: "contacted", dateAdded: "2026-02-01", leadScore: 55,
-            scoreBreakdown: { budget: 8, location: 18, professionalType: 13, timeline: 6, productFit: 7, relationship: 3 },
+            status: "contacted", dateAdded: "2026-02-01", leadScore: 37,
+            scoreBreakdown: { designsShared: 0, budget: 7, location: 13, professionalType: 10, timeline: 4, productFit: 5, relationship: 2 },
+            designsShared: { shared: false, files: [] },
             interactions: [
                 { date: "2026-02-01", type: "inbound", title: "Phone inquiry", description: "Called about exterior moulding pricing for 8-unit townhome project." },
                 { date: "2026-02-05", type: "email", title: "Pricing catalog sent", description: "Emailed standard moulding profiles and pricing for builder accounts." },
@@ -1443,8 +1586,9 @@
             estimatedBudget: 35000, timeline: "TBD", timelineUrgency: "low",
             productsInterested: ["Exterior Moulding"],
             sqFootage: 900,
-            status: "new", dateAdded: "2026-02-06", leadScore: 38,
-            scoreBreakdown: { budget: 6, location: 8, professionalType: 14, timeline: 4, productFit: 4, relationship: 2 },
+            status: "new", dateAdded: "2026-02-06", leadScore: 25,
+            scoreBreakdown: { designsShared: 0, budget: 5, location: 6, professionalType: 10, timeline: 3, productFit: 3, relationship: 1 },
+            designsShared: { shared: false, files: [] },
             interactions: [
                 { date: "2026-02-06", type: "inbound", title: "Website form", description: "Inquired about exterior trim for lakefront home project." },
                 { date: "2026-02-08", type: "email", title: "Auto-response sent", description: "Automated welcome email with product overview and catalog link." }
@@ -1461,8 +1605,9 @@
             estimatedBudget: 18500, timeline: "Q4 2026", timelineUrgency: "low",
             productsInterested: ["Decorative Brackets"],
             sqFootage: 400,
-            status: "new", dateAdded: "2026-02-09", leadScore: 24,
-            scoreBreakdown: { budget: 4, location: 16, professionalType: 4, timeline: 4, productFit: 3, relationship: 1 },
+            status: "new", dateAdded: "2026-02-09", leadScore: 18,
+            scoreBreakdown: { designsShared: 0, budget: 3, location: 12, professionalType: 3, timeline: 3, productFit: 2, relationship: 1 },
+            designsShared: { shared: false, files: [] },
             interactions: [
                 { date: "2026-02-09", type: "inbound", title: "Instagram DM inquiry", description: "Saw our brackets on a Destin beach house post. Wants similar for her home." }
             ],
@@ -1478,8 +1623,16 @@
             estimatedBudget: 340000, timeline: "Q2 2026", timelineUrgency: "high",
             productsInterested: ["Column Wraps", "Exterior Moulding", "Louvers", "Stain Series Ceiling"],
             sqFootage: 6800,
-            status: "qualified", dateAdded: "2025-12-15", leadScore: 91,
-            scoreBreakdown: { budget: 20, location: 18, professionalType: 20, timeline: 14, productFit: 13, relationship: 6 },
+            status: "qualified", dateAdded: "2025-12-15", leadScore: 90,
+            scoreBreakdown: { designsShared: 27, budget: 15, location: 14, professionalType: 15, timeline: 9, productFit: 8, relationship: 2 },
+            designsShared: {
+                shared: true,
+                files: [
+                    { name: "Boutique_Hotel_Elevations.dwg", type: "cad", date: "2026-01-10" },
+                    { name: "Colonial_Moulding_Schedule.pdf", type: "pdf", date: "2026-01-30" },
+                    { name: "Louver_Window_Details.dwg", type: "cad", date: "2026-02-03" }
+                ]
+            },
             interactions: [
                 { date: "2025-12-15", type: "inbound", title: "Website inquiry — international", description: "Designing boutique hotel in Nassau. Needs salt-resistant exterior materials." },
                 { date: "2025-12-18", type: "call", title: "International consultation", description: "Discussed shipping logistics to Bahamas. 28-room boutique hotel." },
@@ -1499,8 +1652,9 @@
             estimatedBudget: 88000, timeline: "Q3 2026", timelineUrgency: "medium",
             productsInterested: ["Column Wraps", "Exterior Moulding"],
             sqFootage: 2000,
-            status: "contacted", dateAdded: "2026-01-18", leadScore: 63,
-            scoreBreakdown: { budget: 10, location: 18, professionalType: 13, timeline: 8, productFit: 8, relationship: 6 },
+            status: "contacted", dateAdded: "2026-01-18", leadScore: 40,
+            scoreBreakdown: { designsShared: 0, budget: 8, location: 13, professionalType: 10, timeline: 6, productFit: 5, relationship: 3 },
+            designsShared: { shared: false, files: [] },
             interactions: [
                 { date: "2026-01-18", type: "inbound", title: "Email RFQ", description: "Requested pricing for column wraps and moulding for community clubhouse." },
                 { date: "2026-01-22", type: "email", title: "Pricing response sent", description: "Provided line-item pricing for specified products." },
@@ -1518,8 +1672,9 @@
             estimatedBudget: 47000, timeline: "Q3 2026", timelineUrgency: "low",
             productsInterested: ["Pergola Systems", "Decorative Brackets"],
             sqFootage: 1200,
-            status: "new", dateAdded: "2026-02-04", leadScore: 52,
-            scoreBreakdown: { budget: 6, location: 15, professionalType: 17, timeline: 6, productFit: 6, relationship: 2 },
+            status: "new", dateAdded: "2026-02-04", leadScore: 34,
+            scoreBreakdown: { designsShared: 0, budget: 5, location: 11, professionalType: 12, timeline: 4, productFit: 4, relationship: 1 },
+            designsShared: { shared: false, files: [] },
             interactions: [
                 { date: "2026-02-04", type: "inbound", title: "Website form submission", description: "Designing riverfront restaurant. Interested in pergola systems for outdoor dining." },
                 { date: "2026-02-07", type: "email", title: "Product literature sent", description: "Emailed pergola and bracket catalogs with restaurant project references." }
@@ -1537,7 +1692,14 @@
             productsInterested: ["Pergola Systems", "Column Wraps", "Decorative Brackets", "Trellis Systems"],
             sqFootage: 3500,
             status: "qualified", dateAdded: "2026-01-05", leadScore: 82,
-            scoreBreakdown: { budget: 16, location: 20, professionalType: 18, timeline: 14, productFit: 11, relationship: 3 },
+            scoreBreakdown: { designsShared: 22, budget: 12, location: 15, professionalType: 13, timeline: 9, productFit: 8, relationship: 3 },
+            designsShared: {
+                shared: true,
+                files: [
+                    { name: "Wedding_Venue_Pergola.dwg", type: "cad", date: "2026-01-20" },
+                    { name: "Entry_Column_Details.pdf", type: "pdf", date: "2026-01-25" }
+                ]
+            },
             interactions: [
                 { date: "2026-01-05", type: "inbound", title: "Phone call inquiry", description: "Designing oceanfront wedding venue. Needs elegant pergolas and columns." },
                 { date: "2026-01-10", type: "call", title: "Design consultation", description: "Discussed architectural vision. Grand entry columns and ceremony pergola." },
@@ -1557,7 +1719,16 @@
             productsInterested: ["Column Wraps", "Exterior Moulding", "Pergola Systems", "Stain Series Ceiling", "Louvers"],
             sqFootage: 9200,
             status: "proposal", dateAdded: "2025-11-15", leadScore: 95,
-            scoreBreakdown: { budget: 20, location: 18, professionalType: 17, timeline: 15, productFit: 15, relationship: 10 },
+            scoreBreakdown: { designsShared: 28, budget: 15, location: 14, professionalType: 13, timeline: 10, productFit: 10, relationship: 5 },
+            designsShared: {
+                shared: true,
+                files: [
+                    { name: "Island_Estate_Full_Exterior.dwg", type: "cad", date: "2025-12-10" },
+                    { name: "PVC_Material_Specifications.pdf", type: "pdf", date: "2025-12-15" },
+                    { name: "Pergola_Poolside_Design.dwg", type: "cad", date: "2025-12-20" },
+                    { name: "Stain_Series_Ceiling_Layout.pdf", type: "pdf", date: "2026-01-02" }
+                ]
+            },
             interactions: [
                 { date: "2025-11-15", type: "inbound", title: "Direct referral", description: "Referred by previous client. Building private island estate in Turks & Caicos." },
                 { date: "2025-11-20", type: "call", title: "Executive introduction", description: "9,200 sqft estate. All-PVC exterior requirement due to extreme salt exposure." },
@@ -1577,8 +1748,9 @@
             estimatedBudget: 28000, timeline: "Q4 2026", timelineUrgency: "low",
             productsInterested: ["Decorative Brackets", "Exterior Moulding"],
             sqFootage: 600,
-            status: "new", dateAdded: "2026-02-08", leadScore: 33,
-            scoreBreakdown: { budget: 4, location: 18, professionalType: 10, timeline: 4, productFit: 5, relationship: 1 },
+            status: "new", dateAdded: "2026-02-08", leadScore: 22,
+            scoreBreakdown: { designsShared: 0, budget: 3, location: 13, professionalType: 7, timeline: 3, productFit: 3, relationship: 1 },
+            designsShared: { shared: false, files: [] },
             interactions: [
                 { date: "2026-02-08", type: "inbound", title: "Email inquiry", description: "Looking for decorative exterior elements for balcony remodel." }
             ],
@@ -1594,8 +1766,9 @@
             estimatedBudget: 73000, timeline: "Q2 2026", timelineUrgency: "medium",
             productsInterested: ["Column Wraps", "Exterior Moulding", "Soffit Ceiling"],
             sqFootage: 1800,
-            status: "contacted", dateAdded: "2026-01-25", leadScore: 58,
-            scoreBreakdown: { budget: 10, location: 18, professionalType: 13, timeline: 10, productFit: 9, relationship: 4 },
+            status: "contacted", dateAdded: "2026-01-25", leadScore: 39,
+            scoreBreakdown: { designsShared: 0, budget: 8, location: 13, professionalType: 10, timeline: 7, productFit: 6, relationship: 2 },
+            designsShared: { shared: false, files: [] },
             interactions: [
                 { date: "2026-01-25", type: "inbound", title: "Website inquiry", description: "Church rebuild after hurricane damage. Seeking durable exterior materials." },
                 { date: "2026-01-29", type: "call", title: "Needs assessment call", description: "Full exterior restoration. Insurance-funded project with defined budget." },
@@ -1613,8 +1786,16 @@
             estimatedBudget: 375000, timeline: "Q2 2026", timelineUrgency: "high",
             productsInterested: ["Stain Series Ceiling", "Column Wraps", "Exterior Moulding", "Rafter Tails", "Decorative Brackets"],
             sqFootage: 7000,
-            status: "qualified", dateAdded: "2025-12-28", leadScore: 90,
-            scoreBreakdown: { budget: 20, location: 20, professionalType: 20, timeline: 14, productFit: 12, relationship: 4 },
+            status: "qualified", dateAdded: "2025-12-28", leadScore: 92,
+            scoreBreakdown: { designsShared: 27, budget: 15, location: 15, professionalType: 15, timeline: 9, productFit: 8, relationship: 3 },
+            designsShared: {
+                shared: true,
+                files: [
+                    { name: "Kiawah_Resort_Masterplan.dwg", type: "cad", date: "2026-01-18" },
+                    { name: "Lowcountry_Rafter_Details.dwg", type: "cad", date: "2026-01-25" },
+                    { name: "Stain_Series_Color_Specs.pdf", type: "pdf", date: "2026-02-05" }
+                ]
+            },
             interactions: [
                 { date: "2025-12-28", type: "inbound", title: "Professional dashboard signup", description: "Registered for professional account. Immediately downloaded CAD files." },
                 { date: "2026-01-03", type: "call", title: "Introduction call", description: "Designing 5-property resort complex on Kiawah. Lowcountry architectural style." },
@@ -1669,12 +1850,13 @@
     }
 
     const scoreFactorLabels = {
-        budget: { label: 'Project Budget', max: 20 },
-        location: { label: 'Location', max: 20 },
-        professionalType: { label: 'Professional Type', max: 20 },
-        timeline: { label: 'Timeline Urgency', max: 15 },
-        productFit: { label: 'Product Fit', max: 15 },
-        relationship: { label: 'Relationship', max: 10 }
+        designsShared: { label: 'Designs Shared', max: 30 },
+        budget: { label: 'Project Budget', max: 15 },
+        location: { label: 'Location', max: 15 },
+        professionalType: { label: 'Professional Type', max: 15 },
+        timeline: { label: 'Timeline Urgency', max: 10 },
+        productFit: { label: 'Product Fit', max: 10 },
+        relationship: { label: 'Relationship', max: 5 }
     };
 
     // ============ FILTERING & SORTING ============
@@ -1741,6 +1923,10 @@
                 <td>${lead.projectType}</td>
                 <td class="location-cell">${lead.location}</td>
                 <td class="budget-cell">${formatBudget(lead.estimatedBudget)}</td>
+                <td>${lead.designsShared.shared
+                    ? `<span class="designs-badge shared"><i class="fa-solid fa-drafting-compass"></i> ${lead.designsShared.files.length} files</span>`
+                    : `<span class="designs-badge not-shared"><i class="fa-solid fa-minus"></i> None</span>`
+                }</td>
                 <td><div class="score-circle ${tier}">${lead.leadScore}</div></td>
                 <td><span class="status-badge ${lead.status}">${getStatusLabel(lead.status)}</span></td>
                 <td class="date-cell">${formatDate(lead.dateAdded)}</td>
@@ -1831,6 +2017,32 @@
                         <span class="info-value" style="font-weight:400;color:var(--brand-grey-dark);">${lead.notes}</span>
                     </div>` : ''}
                 </div>
+            </div>
+
+            <div class="panel-section">
+                <div class="panel-section-title">Architecture Designs</div>
+                ${lead.designsShared.shared ? `
+                    <div class="designs-detail">
+                        <div class="designs-detail-header">
+                            <i class="fa-solid fa-drafting-compass"></i>
+                            <span>${lead.designsShared.files.length} Design File${lead.designsShared.files.length !== 1 ? 's' : ''} Shared</span>
+                        </div>
+                        <div class="designs-file-list">
+                            ${lead.designsShared.files.map(f => `
+                                <div class="designs-file">
+                                    <i class="fa-solid ${f.type === 'cad' ? 'fa-compass-drafting' : f.type === 'spreadsheet' ? 'fa-file-excel' : 'fa-file-pdf'}"></i>
+                                    <span class="designs-file-name">${f.name}</span>
+                                    <span class="designs-file-date">${formatDate(f.date)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : `
+                    <div class="designs-not-shared">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>No architecture designs have been shared yet. This significantly impacts the lead qualification score.</span>
+                    </div>
+                `}
             </div>
 
             <div class="panel-section">
