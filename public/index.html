@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Qualification Dashboard | HB Elements</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+    <style>
+        /* ============ RESET & BASE ============ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --brand-primary: #0066CC;
+            --brand-secondary: #028ED1;
+            --brand-black: #000000;
+            --brand-white: #FFFFFF;
+            --brand-grey-light: #E7E7E7;
+            --brand-grey-medium: #6D6D6D;
+            --brand-grey-dark: #3D3D3D;
+
+            --color-hot: #22C55E;
+            --color-hot-bg: #DCFCE7;
+            --color-warm: #F59E0B;
+            --color-warm-bg: #FEF3C7;
+            --color-cold: #EF4444;
+            --color-cold-bg: #FEE2E2;
+
+            --status-new: #8B5CF6;
+            --status-new-bg: #EDE9FE;
+            --status-contacted: #3B82F6;
+            --status-contacted-bg: #DBEAFE;
+            --status-qualified: #22C55E;
+            --status-qualified-bg: #DCFCE7;
+            --status-proposal: #F59E0B;
+            --status-proposal-bg: #FEF3C7;
+            --status-won: #10B981;
+            --status-won-bg: #D1FAE5;
+            --status-lost: #6B7280;
+            --status-lost-bg: #F3F4F6;
+
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --detail-panel-width: 500px;
+
+            --bg-body: #F0F2F5;
+            --bg-card: #FFFFFF;
+            --bg-sidebar: #1A1D23;
+            --bg-sidebar-hover: #2A2D35;
+            --bg-header: #FFFFFF;
+
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 50px -12px rgba(0,0,0,0.25);
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+        }
+
+        html { font-size: 14px; }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-body);
+            color: var(--brand-grey-dark);
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr;
+            grid-template-rows: var(--header-height) 1fr;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ============ SIDEBAR ============ */
+        .sidebar {
+            grid-row: 1 / -1;
+            background: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            z-index: 100;
+            opacity: 0;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-brand img {
+            height: 38px;
+            width: auto;
+        }
+
+        .sidebar-brand span {
+            color: var(--brand-white);
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .sidebar-nav {
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.93rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-sidebar-hover);
+            color: rgba(255,255,255,0.85);
+        }
+
+        .nav-item.active {
+            background: rgba(0, 102, 204, 0.15);
+            color: var(--brand-secondary);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 8px 12px;
+        }
+
+        .sidebar-spacer { flex: 1; }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--brand-primary);
+            color: var(--brand-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .user-name {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--brand-grey-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 50;
+            opacity: 0;
+            animation: slideDown 0.4s ease 0.1s forwards;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .page-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--brand-black);
+        }
+
+        .page-subtitle {
+            font-size: 0.85rem;
+            color: var(--brand-grey-medium);
+            font-weight: 400;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-search {
+            position: relative;
+        }
+
+        .header-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--brand-grey-medium);
+            font-size: 0.85rem;
+        }
+
+        .header-search input {
+            padding: 8px 14px 8px 36px;
+            border: 1px solid var(--brand-grey-light);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            width: 240px;
+            outline: none;
+            transition: border-color 0.15s ease;
+            background: var(--bg-body);
+        }
+
+        .header-search input:focus {
+            border-color: var(--brand-secondary);
+            box-shadow: 0 0 0 3px rgba(2, 142, 209, 0.1);
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            color: var(--brand-grey-medium);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.15s ease;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-body);
+            color: var(--brand-grey-dark);
+        }
+
+        .icon-btn .notification-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            background: var(--color-hot);
+            border-radius: 50%;
+            border: 2px solid var(--bg-header);
+        }
+
+        .date-range {
+            font-size: 0.85rem;
+            color: var(--brand-grey-medium);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border: 1px solid var(--brand-grey-light);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            background: var(--bg-body);
+        }
+
+        /* ============ MAIN CONTENT ============ */
+        .main-content {
+            overflow-y: auto;
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* ============ KPI CARDS ============ */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 22px 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            opacity: 0;
+            transform: translateY(20px);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .kpi-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .kpi-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .kpi-icon.blue { background: rgba(0,102,204,0.1); color: var(--brand-primary); }
+        .kpi-icon.green { background: rgba(34,197,94,0.1); color: var(--color-hot); }
+        .kpi-icon.purple { background: rgba(139,92,246,0.1); color: #8B5CF6; }
+        .kpi-icon.amber { background: rgba(245,158,11,0.1); color: var(--color-warm); }
+        .kpi-icon.cyan { background: rgba(2,142,209,0.1); color: var(--brand-secondary); }
+
+        .kpi-content {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .kpi-value {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--brand-black);
+            line-height: 1.2;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            color: var(--brand-grey-medium);
+            margin-top: 2px;
+        }
+
+        .kpi-trend {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .kpi-trend.up { color: var(--color-hot); }
+        .kpi-trend.down-good { color: var(--color-hot); }
+        .kpi-trend.down { color: var(--color-cold); }
+
+        /* ============ CHARTS ============ */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0,0,0,0.04);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .chart-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .chart-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--brand-black);
+        }
+
+        .chart-filter {
+            padding: 5px 10px;
+            border: 1px solid var(--brand-grey-light);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-family);
+            font-size: 0.8rem;
+            color: var(--brand-grey-medium);
+            background: var(--bg-body);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .chart-body {
+            position: relative;
+            height: 240px;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--brand-grey-medium);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ============ TABLE CONTROLS ============ */
+        .table-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 7px 16px;
+            border: 1px solid var(--brand-grey-light);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            font-family: var(--font-family);
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--brand-grey-medium);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--brand-secondary);
+            color: var(--brand-secondary);
+        }
+
+        .filter-btn.active {
+            background: var(--brand-primary);
+            color: var(--brand-white);
+            border-color: var(--brand-primary);
+        }
+
+        .status-filter {
+            padding: 7px 12px;
+            border: 1px solid var(--brand-grey-light);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-family);
+            font-size: 0.82rem;
+            color: var(--brand-grey-medium);
+            background: var(--bg-card);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .table-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lead-count {
+            font-size: 0.82rem;
+            color: var(--brand-grey-medium);
+        }
+
+        .export-btn {
+            padding: 7px 16px;
+            border: 1px solid var(--brand-grey-light);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            font-family: var(--font-family);
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--brand-grey-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .export-btn:hover {
+            border-color: var(--brand-grey-medium);
+        }
+
+        /* ============ TABLE ============ */
+        .table-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.04);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .table-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .leads-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leads-table thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--brand-grey-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #FAFBFC;
+            border-bottom: 1px solid var(--brand-grey-light);
+            white-space: nowrap;
+            cursor: default;
+            user-select: none;
+        }
+
+        .leads-table thead th.sortable {
+            cursor: pointer;
+            transition: color 0.15s ease;
+        }
+
+        .leads-table thead th.sortable:hover {
+            color: var(--brand-primary);
+        }
+
+        .leads-table thead th .sort-icon {
+            margin-left: 4px;
+            font-size: 0.7rem;
+            opacity: 0.4;
+        }
+
+        .leads-table thead th.sorted .sort-icon {
+            opacity: 1;
+            color: var(--brand-primary);
+        }
+
+        .leads-table tbody tr {
+            cursor: pointer;
+            transition: background 0.15s ease;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .leads-table tbody tr:hover {
+            background: rgba(0, 102, 204, 0.03);
+        }
+
+        .leads-table tbody tr.selected {
+            background: rgba(0, 102, 204, 0.06);
+        }
+
+        .leads-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .leads-table tbody td {
+            padding: 14px 16px;
+            font-size: 0.88rem;
+        }
+
+        .lead-name-cell {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lead-name {
+            font-weight: 600;
+            color: var(--brand-black);
+        }
+
+        .lead-role {
+            font-size: 0.75rem;
+            color: var(--brand-grey-medium);
+            margin-top: 1px;
+        }
+
+        .score-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--brand-white);
+        }
+
+        .score-circle.hot { background: var(--color-hot); }
+        .score-circle.warm { background: var(--color-warm); }
+        .score-circle.cold { background: var(--color-cold); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-badge.new { background: var(--status-new-bg); color: var(--status-new); }
+        .status-badge.contacted { background: var(--status-contacted-bg); color: var(--status-contacted); }
+        .status-badge.qualified { background: var(--status-qualified-bg); color: var(--status-qualified); }
+        .status-badge.proposal { background: var(--status-proposal-bg); color: var(--status-proposal); }
+        .status-badge.won { background: var(--status-won-bg); color: var(--status-won); }
+        .status-badge.lost { background: var(--status-lost-bg); color: var(--status-lost); }
+
+        .budget-cell {
+            font-weight: 600;
+            color: var(--brand-black);
+        }
+
+        .location-cell {
+            color: var(--brand-grey-dark);
+        }
+
+        .date-cell {
+            color: var(--brand-grey-medium);
+            font-size: 0.82rem;
+        }
+
+        /* ============ DETAIL PANEL ============ */
+        .detail-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 200;
+        }
+
+        .detail-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .detail-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: var(--detail-panel-width);
+            height: 100vh;
+            background: var(--bg-card);
+            box-shadow: var(--shadow-xl);
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 201;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-panel.open {
+            transform: translateX(0);
+        }
+
+        .panel-header {
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid var(--brand-grey-light);
+            flex-shrink: 0;
+        }
+
+        .panel-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .panel-title-row h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--brand-black);
+        }
+
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--bg-body);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-grey-medium);
+            font-size: 1rem;
+            transition: all 0.15s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--brand-grey-light);
+            color: var(--brand-grey-dark);
+        }
+
+        .panel-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .panel-score.hot { background: var(--color-hot-bg); color: var(--color-hot); }
+        .panel-score.warm { background: var(--color-warm-bg); color: var(--color-warm); }
+        .panel-score.cold { background: var(--color-cold-bg); color: var(--color-cold); }
+
+        .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 28px;
+        }
+
+        .panel-section {
+            margin-bottom: 28px;
+        }
+
+        .panel-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .panel-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--brand-grey-medium);
+            margin-bottom: 14px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .info-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--brand-grey-medium);
+        }
+
+        .info-value {
+            font-size: 0.88rem;
+            color: var(--brand-black);
+            font-weight: 500;
+        }
+
+        .products-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .product-tag {
+            padding: 3px 10px;
+            background: rgba(0, 102, 204, 0.08);
+            color: var(--brand-primary);
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Score Breakdown */
+        .score-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .score-factor {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .factor-label {
+            width: 130px;
+            font-size: 0.82rem;
+            color: var(--brand-grey-dark);
+            flex-shrink: 0;
+        }
+
+        .factor-bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-body);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .factor-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            width: 0;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .factor-score {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--brand-grey-dark);
+            width: 38px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .total-score-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            margin-top: 6px;
+            border-top: 1px solid var(--brand-grey-light);
+        }
+
+        .total-score-label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--brand-black);
+        }
+
+        .total-score-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 14px;
+            padding-bottom: 20px;
+            position: relative;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 13px;
+            top: 28px;
+            bottom: 0;
+            width: 2px;
+            background: var(--brand-grey-light);
+        }
+
+        .timeline-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--brand-white);
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .timeline-dot.inbound { background: var(--status-new); }
+        .timeline-dot.call { background: var(--brand-primary); }
+        .timeline-dot.email { background: var(--brand-secondary); }
+        .timeline-dot.meeting { background: var(--color-hot); }
+        .timeline-dot.note { background: var(--brand-grey-medium); }
+
+        .timeline-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .timeline-date {
+            font-size: 0.72rem;
+            color: var(--brand-grey-medium);
+        }
+
+        .timeline-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--brand-black);
+            margin-top: 2px;
+        }
+
+        .timeline-desc {
+            font-size: 0.8rem;
+            color: var(--brand-grey-dark);
+            margin-top: 3px;
+            line-height: 1.5;
+        }
+
+        /* Panel Footer */
+        .panel-footer {
+            padding: 16px 28px;
+            border-top: 1px solid var(--brand-grey-light);
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-family);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .action-btn.primary {
+            background: var(--brand-primary);
+            color: var(--brand-white);
+        }
+
+        .action-btn.primary:hover {
+            background: #0055AA;
+        }
+
+        .action-btn.secondary {
+            background: var(--bg-body);
+            color: var(--brand-grey-dark);
+        }
+
+        .action-btn.secondary:hover {
+            background: var(--brand-grey-light);
+        }
+
+        .action-btn.accent {
+            background: rgba(0, 102, 204, 0.1);
+            color: var(--brand-primary);
+        }
+
+        .action-btn.accent:hover {
+            background: rgba(0, 102, 204, 0.18);
+        }
+
+        /* ============ ANIMATIONS ============ */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============ SCROLLBAR ============ */
+        .main-content::-webkit-scrollbar,
+        .panel-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .main-content::-webkit-scrollbar-track,
+        .panel-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .main-content::-webkit-scrollbar-thumb,
+        .panel-body::-webkit-scrollbar-thumb {
+            background: var(--brand-grey-light);
+            border-radius: 3px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover,
+        .panel-body::-webkit-scrollbar-thumb:hover {
+            background: var(--brand-grey-medium);
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="images/hb-logo.png" alt="HB Elements">
+            <span>HB Elements</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-item active"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a class="nav-item"><i class="fa-solid fa-users"></i> All Leads</a>
+            <a class="nav-item"><i class="fa-solid fa-filter"></i> Qualification</a>
+            <a class="nav-item"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+            <a class="nav-item"><i class="fa-solid fa-file-invoice"></i> Proposals</a>
+            <a class="nav-item"><i class="fa-solid fa-building"></i> Accounts</a>
+        </nav>
+        <div class="sidebar-divider"></div>
+        <nav class="sidebar-nav">
+            <a class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+            <a class="nav-item"><i class="fa-solid fa-circle-question"></i> Help</a>
+        </nav>
+        <div class="sidebar-spacer"></div>
+        <div class="sidebar-footer">
+            <div class="user-avatar">JM</div>
+            <div class="user-info">
+                <span class="user-name">Jessica Martinez</span>
+                <span class="user-role">Sales Director</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="page-title">Lead Qualification</h1>
+            <span class="page-subtitle">Dashboard</span>
+        </div>
+        <div class="header-right">
+            <div class="header-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search leads..." id="searchInput">
+            </div>
+            <button class="icon-btn" aria-label="Notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span class="notification-dot"></span>
+            </button>
+            <button class="icon-btn" aria-label="Calendar">
+                <i class="fa-solid fa-calendar"></i>
+            </button>
+            <div class="date-range">
+                <span>Jan 1 – Feb 11, 2026</span>
+                <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- KPI CARDS -->
+        <section class="kpi-grid">
+            <div class="kpi-card" data-delay="0">
+                <div class="kpi-icon blue"><i class="fa-solid fa-users"></i></div>
+                <div class="kpi-content">
+                    <span class="kpi-value">247</span>
+                    <span class="kpi-label">Total Leads</span>
+                    <span class="kpi-trend up"><i class="fa-solid fa-arrow-up"></i> +12.5% vs last month</span>
+                </div>
+            </div>
+            <div class="kpi-card" data-delay="80">
+                <div class="kpi-icon green"><i class="fa-solid fa-user-check"></i></div>
+                <div class="kpi-content">
+                    <span class="kpi-value">83</span>
+                    <span class="kpi-label">Qualified Leads</span>
+                    <span class="kpi-trend up"><i class="fa-solid fa-arrow-up"></i> +8.3%</span>
+                </div>
+            </div>
+            <div class="kpi-card" data-delay="160">
+                <div class="kpi-icon purple"><i class="fa-solid fa-percent"></i></div>
+                <div class="kpi-content">
+                    <span class="kpi-value">33.6%</span>
+                    <span class="kpi-label">Conversion Rate</span>
+                    <span class="kpi-trend up"><i class="fa-solid fa-arrow-up"></i> +2.1%</span>
+                </div>
+            </div>
+            <div class="kpi-card" data-delay="240">
+                <div class="kpi-icon amber"><i class="fa-solid fa-dollar-sign"></i></div>
+                <div class="kpi-content">
+                    <span class="kpi-value">$4.2M</span>
+                    <span class="kpi-label">Pipeline Value</span>
+                    <span class="kpi-trend up"><i class="fa-solid fa-arrow-up"></i> +18.7%</span>
+                </div>
+            </div>
+            <div class="kpi-card" data-delay="320">
+                <div class="kpi-icon cyan"><i class="fa-solid fa-clock"></i></div>
+                <div class="kpi-content">
+                    <span class="kpi-value">2.4 hrs</span>
+                    <span class="kpi-label">Avg Response Time</span>
+                    <span class="kpi-trend down-good"><i class="fa-solid fa-arrow-down"></i> -15 min</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHARTS -->
+        <section class="charts-grid">
+            <div class="chart-card" data-delay="400">
+                <div class="chart-header">
+                    <h3>Lead Score Distribution</h3>
+                    <select class="chart-filter">
+                        <option>This Month</option>
+                        <option>Last 30 Days</option>
+                        <option>This Quarter</option>
+                    </select>
+                </div>
+                <div class="chart-body">
+                    <canvas id="leadScoreChart"></canvas>
+                </div>
+                <div class="chart-legend" id="scoreLegend"></div>
+            </div>
+            <div class="chart-card" data-delay="480">
+                <div class="chart-header">
+                    <h3>Qualification Pipeline</h3>
+                    <select class="chart-filter">
+                        <option>This Month</option>
+                        <option>Last 30 Days</option>
+                        <option>This Quarter</option>
+                    </select>
+                </div>
+                <div class="chart-body">
+                    <canvas id="pipelineChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABLE CONTROLS -->
+        <div class="table-controls">
+            <div class="filter-group">
+                <button class="filter-btn active" data-tier="all">All Leads</button>
+                <button class="filter-btn" data-tier="hot">Hot</button>
+                <button class="filter-btn" data-tier="warm">Warm</button>
+                <button class="filter-btn" data-tier="cold">Cold</button>
+                <select class="status-filter" id="statusFilter">
+                    <option value="all">All Statuses</option>
+                    <option value="new">New</option>
+                    <option value="contacted">Contacted</option>
+                    <option value="qualified">Qualified</option>
+                    <option value="proposal">Proposal Sent</option>
+                    <option value="won">Won</option>
+                    <option value="lost">Lost</option>
+                </select>
+            </div>
+            <div class="table-actions">
+                <span class="lead-count" id="leadCount">Showing 18 leads</span>
+                <button class="export-btn"><i class="fa-solid fa-download"></i> Export CSV</button>
+            </div>
+        </div>
+
+        <!-- LEADS TABLE -->
+        <div class="table-card" data-delay="560">
+            <table class="leads-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-column="name">Contact Name <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-column="company">Company <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th>Project Type</th>
+                        <th>Location</th>
+                        <th class="sortable" data-column="budget">Est. Budget <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable sorted" data-column="leadScore">Lead Score <i class="fa-solid fa-sort-down sort-icon"></i></th>
+                        <th>Status</th>
+                        <th class="sortable" data-column="dateAdded">Date <i class="fa-solid fa-sort sort-icon"></i></th>
+                    </tr>
+                </thead>
+                <tbody id="leadsTableBody"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- DETAIL PANEL OVERLAY -->
+    <div class="detail-overlay" id="detailOverlay"></div>
+
+    <!-- DETAIL PANEL -->
+    <div class="detail-panel" id="detailPanel">
+        <div class="panel-header">
+            <div class="panel-title-row">
+                <h2 id="panelName"></h2>
+                <button class="close-btn" id="closePanel"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="panel-meta">
+                <span class="panel-score" id="panelScore"></span>
+                <span class="status-badge" id="panelStatus"></span>
+                <span class="date-cell" id="panelDate"></span>
+            </div>
+        </div>
+        <div class="panel-body" id="panelBody"></div>
+        <div class="panel-footer">
+            <button class="action-btn primary"><i class="fa-solid fa-envelope"></i> Email</button>
+            <button class="action-btn secondary"><i class="fa-solid fa-phone"></i> Call</button>
+            <button class="action-btn accent"><i class="fa-solid fa-file-lines"></i> Proposal</button>
+        </div>
+    </div>
+
+    <script>
+    // ============ DATA ============
+    const leadsData = [
+        {
+            id: 1,
+            firstName: "Robert", lastName: "Harrington",
+            email: "r.harrington@coastaldesigngroup.com", phone: "(561) 555-0147",
+            company: "Coastal Design Group", role: "Principal Architect",
+            professionalType: "architect",
+            projectType: "Luxury Coastal Estate", location: "Palm Beach, FL",
+            estimatedBudget: 285000, timeline: "Q2 2026", timelineUrgency: "high",
+            productsInterested: ["PVC Column Wraps", "Exterior Moulding", "Decorative Brackets"],
+            sqFootage: 4200,
+            status: "qualified", dateAdded: "2026-01-15", leadScore: 92,
+            scoreBreakdown: { budget: 18, location: 20, professionalType: 19, timeline: 14, productFit: 13, relationship: 8 },
+            interactions: [
+                { date: "2026-01-15", type: "inbound", title: "Website form submission", description: "Requested quote for PVC exterior moulding for 12,000 sqft coastal estate." },
+                { date: "2026-01-16", type: "call", title: "Initial discovery call", description: "Discussed project scope. 42 windows needing surrounds, full porch column package." },
+                { date: "2026-01-22", type: "email", title: "Product samples shipped", description: "Sent PVC column wrap and moulding profile samples to client office." },
+                { date: "2026-02-01", type: "meeting", title: "On-site consultation", description: "Visited project site in Palm Beach. Took measurements." },
+                { date: "2026-02-08", type: "call", title: "Follow-up call", description: "Client confirmed budget approval. Ready for formal proposal." }
+            ],
+            notes: "High-value repeat client. Previously purchased for 3 projects."
+        },
+        {
+            id: 2,
+            firstName: "Maria", lastName: "Santos",
+            email: "msantos@santosvega.com", phone: "(340) 555-0293",
+            company: "Santos & Vega Architects", role: "Senior Architect",
+            professionalType: "architect",
+            projectType: "Caribbean Resort Renovation", location: "St. Thomas, USVI",
+            estimatedBudget: 425000, timeline: "Q1 2026", timelineUrgency: "high",
+            productsInterested: ["Stain Series Ceiling", "Pergola Systems", "Column Wraps", "Louvers"],
+            sqFootage: 8500,
+            status: "proposal", dateAdded: "2025-12-10", leadScore: 96,
+            scoreBreakdown: { budget: 20, location: 18, professionalType: 20, timeline: 15, productFit: 14, relationship: 9 },
+            interactions: [
+                { date: "2025-12-10", type: "inbound", title: "Referral from Kenneth Blackwell", description: "Architect colleague referred for Caribbean resort project." },
+                { date: "2025-12-12", type: "call", title: "Discovery call", description: "Discussed 45-room resort renovation. Major exterior millwork overhaul." },
+                { date: "2025-12-20", type: "meeting", title: "Virtual design review", description: "Reviewed CAD drawings. Extensive pergola and column requirements." },
+                { date: "2026-01-08", type: "email", title: "Formal proposal sent", description: "Sent detailed proposal with product specs and pricing. $425K scope." },
+                { date: "2026-01-22", type: "call", title: "Proposal review call", description: "Client reviewing with ownership group. Very positive response." }
+            ],
+            notes: "Largest potential deal this quarter. Caribbean location perfect for PVC."
+        },
+        {
+            id: 3,
+            firstName: "James", lastName: "Whitfield",
+            email: "james@whitfieldcustom.com", phone: "(843) 555-0184",
+            company: "Whitfield Custom Homes", role: "Owner/Builder",
+            professionalType: "builder",
+            projectType: "Waterfront Custom Home", location: "Hilton Head, SC",
+            estimatedBudget: 178000, timeline: "Q2 2026", timelineUrgency: "medium",
+            productsInterested: ["Exterior Moulding", "Rafter Tails", "Soffit Ceiling"],
+            sqFootage: 3800,
+            status: "contacted", dateAdded: "2026-01-20", leadScore: 84,
+            scoreBreakdown: { budget: 16, location: 20, professionalType: 16, timeline: 12, productFit: 12, relationship: 8 },
+            interactions: [
+                { date: "2026-01-20", type: "inbound", title: "Trade show contact", description: "Met at Southeast Builders Conference. Interested in coastal millwork." },
+                { date: "2026-01-25", type: "email", title: "Follow-up email with catalog", description: "Sent digital catalog and project portfolio for coastal homes." },
+                { date: "2026-02-03", type: "call", title: "Phone consultation", description: "Discussed Hilton Head waterfront project. Needs rafter tails and exterior moulding." }
+            ],
+            notes: "Builds 4-6 custom homes per year in Hilton Head area."
+        },
+        {
+            id: 4,
+            firstName: "Catherine", lastName: "Bordeaux",
+            email: "catherine@bordeauxinteriors.com", phone: "(843) 555-0321",
+            company: "Bordeaux Interiors", role: "Interior Designer",
+            professionalType: "designer",
+            projectType: "Historic Coastal Inn Restoration", location: "Charleston, SC",
+            estimatedBudget: 92000, timeline: "Q3 2026", timelineUrgency: "medium",
+            productsInterested: ["Decorative Brackets", "Column Wraps", "Exterior Moulding"],
+            sqFootage: 2200,
+            status: "qualified", dateAdded: "2026-01-08", leadScore: 71,
+            scoreBreakdown: { budget: 12, location: 18, professionalType: 12, timeline: 10, productFit: 11, relationship: 8 },
+            interactions: [
+                { date: "2026-01-08", type: "inbound", title: "Website inquiry", description: "Asked about historically-accurate PVC moulding profiles." },
+                { date: "2026-01-12", type: "call", title: "Consultation call", description: "Restoring 1890s coastal inn. Needs maintenance-free exterior elements." },
+                { date: "2026-01-28", type: "email", title: "Sample request fulfilled", description: "Sent bracket and moulding samples for historic profile matching." },
+                { date: "2026-02-06", type: "call", title: "Design alignment call", description: "Samples approved. Moving to specification phase." }
+            ],
+            notes: "Specializes in historic Charleston-area restorations."
+        },
+        {
+            id: 5,
+            firstName: "David", lastName: "Chen",
+            email: "dchen@pacificrimconst.com", phone: "(949) 555-0467",
+            company: "Pacific Rim Construction", role: "Project Manager",
+            professionalType: "contractor",
+            projectType: "Oceanfront Condo Complex", location: "Laguna Beach, CA",
+            estimatedBudget: 510000, timeline: "Q1 2026", timelineUrgency: "high",
+            productsInterested: ["Stain Series Ceiling", "Exterior Moulding", "Column Wraps", "Grilles", "Pergola Systems"],
+            sqFootage: 12000,
+            status: "proposal", dateAdded: "2025-11-28", leadScore: 98,
+            scoreBreakdown: { budget: 20, location: 20, professionalType: 15, timeline: 15, productFit: 15, relationship: 13 },
+            interactions: [
+                { date: "2025-11-28", type: "inbound", title: "RFP received", description: "Formal RFP for 36-unit oceanfront condo development exterior millwork." },
+                { date: "2025-12-05", type: "meeting", title: "Site visit", description: "Toured construction site. Impressive scale. Direct ocean exposure." },
+                { date: "2025-12-18", type: "call", title: "Technical specs review", description: "Reviewed wind load and salt spray requirements. PVC ideal for location." },
+                { date: "2026-01-10", type: "email", title: "Comprehensive proposal delivered", description: "Submitted $510K proposal for full exterior package." },
+                { date: "2026-02-05", type: "call", title: "Negotiation call", description: "Discussing phased delivery schedule. Close to signing." }
+            ],
+            notes: "Highest-value opportunity. Repeat client from 2024 Newport Beach project."
+        },
+        {
+            id: 6,
+            firstName: "Angela", lastName: "Morrison",
+            email: "angela@morrisonpratt.com", phone: "(252) 555-0198",
+            company: "Morrison & Pratt Design", role: "Architect",
+            professionalType: "architect",
+            projectType: "Beach Club Renovation", location: "Outer Banks, NC",
+            estimatedBudget: 145000, timeline: "Q2 2026", timelineUrgency: "medium",
+            productsInterested: ["Pergola Systems", "Trellis Systems", "Decorative Brackets"],
+            sqFootage: 3200,
+            status: "contacted", dateAdded: "2026-01-28", leadScore: 78,
+            scoreBreakdown: { budget: 14, location: 20, professionalType: 18, timeline: 12, productFit: 10, relationship: 4 },
+            interactions: [
+                { date: "2026-01-28", type: "inbound", title: "Email inquiry", description: "Researching PVC pergola systems for oceanfront beach club." },
+                { date: "2026-02-01", type: "call", title: "Intro call", description: "Beach club needs complete outdoor structure renovation. Storm damage." },
+                { date: "2026-02-09", type: "email", title: "Product specs sent", description: "Sent pergola and trellis system specifications with wind rating data." }
+            ],
+            notes: "First-time contact. Outer Banks location has extreme weather exposure."
+        },
+        {
+            id: 7,
+            firstName: "Thomas", lastName: "Reeves",
+            email: "treeves@reevesdev.com", phone: "(305) 555-0574",
+            company: "Reeves Development Corp", role: "VP of Development",
+            professionalType: "builder",
+            projectType: "Luxury Marina Village", location: "Key West, FL",
+            estimatedBudget: 380000, timeline: "Q2 2026", timelineUrgency: "high",
+            productsInterested: ["Column Wraps", "Exterior Moulding", "Soffit Ceiling", "Decorative Brackets", "Louvers"],
+            sqFootage: 7500,
+            status: "qualified", dateAdded: "2025-12-20", leadScore: 88,
+            scoreBreakdown: { budget: 20, location: 20, professionalType: 16, timeline: 14, productFit: 12, relationship: 6 },
+            interactions: [
+                { date: "2025-12-20", type: "inbound", title: "Website form — commercial project", description: "Inquired about commercial-scale millwork for marina village development." },
+                { date: "2025-12-23", type: "call", title: "Executive intro call", description: "12-building marina village. Caribbean architectural style. Major millwork scope." },
+                { date: "2026-01-15", type: "meeting", title: "In-person meeting", description: "Met at Key West project office. Reviewed architectural plans." },
+                { date: "2026-02-02", type: "email", title: "Preliminary pricing sent", description: "Provided budgetary estimates for phased millwork delivery." }
+            ],
+            notes: "Multi-building commercial development. Could become largest project of 2026."
+        },
+        {
+            id: 8,
+            firstName: "Samantha", lastName: "Okafor",
+            email: "sokafor@sunrisebuilders.com", phone: "(843) 555-0842",
+            company: "Sunrise Builders LLC", role: "General Contractor",
+            professionalType: "contractor",
+            projectType: "Coastal Townhome Community", location: "Myrtle Beach, SC",
+            estimatedBudget: 62000, timeline: "Q3 2026", timelineUrgency: "low",
+            productsInterested: ["Exterior Moulding", "Soffit Ceiling"],
+            sqFootage: 1800,
+            status: "contacted", dateAdded: "2026-02-01", leadScore: 55,
+            scoreBreakdown: { budget: 8, location: 18, professionalType: 13, timeline: 6, productFit: 7, relationship: 3 },
+            interactions: [
+                { date: "2026-02-01", type: "inbound", title: "Phone inquiry", description: "Called about exterior moulding pricing for 8-unit townhome project." },
+                { date: "2026-02-05", type: "email", title: "Pricing catalog sent", description: "Emailed standard moulding profiles and pricing for builder accounts." },
+                { date: "2026-02-10", type: "call", title: "Follow-up call", description: "Contractor comparing with wood options. Budget-conscious project." }
+            ],
+            notes: "Price-sensitive. Comparing PVC vs. traditional wood moulding."
+        },
+        {
+            id: 9,
+            firstName: "William", lastName: "Prescott",
+            email: "bill@prescotthomes.com", phone: "(704) 555-0336",
+            company: "Prescott Homes", role: "Custom Home Builder",
+            professionalType: "builder",
+            projectType: "Lakefront Estate", location: "Lake Norman, NC",
+            estimatedBudget: 35000, timeline: "TBD", timelineUrgency: "low",
+            productsInterested: ["Exterior Moulding"],
+            sqFootage: 900,
+            status: "new", dateAdded: "2026-02-06", leadScore: 38,
+            scoreBreakdown: { budget: 6, location: 8, professionalType: 14, timeline: 4, productFit: 4, relationship: 2 },
+            interactions: [
+                { date: "2026-02-06", type: "inbound", title: "Website form", description: "Inquired about exterior trim for lakefront home project." },
+                { date: "2026-02-08", type: "email", title: "Auto-response sent", description: "Automated welcome email with product overview and catalog link." }
+            ],
+            notes: "Inland location. Small scope. Low urgency — no defined timeline."
+        },
+        {
+            id: 10,
+            firstName: "Rachel", lastName: "Gutierrez",
+            email: "rachel.g@email.com", phone: "(850) 555-0721",
+            company: "—", role: "Homeowner",
+            professionalType: "homeowner",
+            projectType: "Personal Residence Renovation", location: "Destin, FL",
+            estimatedBudget: 18500, timeline: "Q4 2026", timelineUrgency: "low",
+            productsInterested: ["Decorative Brackets"],
+            sqFootage: 400,
+            status: "new", dateAdded: "2026-02-09", leadScore: 24,
+            scoreBreakdown: { budget: 4, location: 16, professionalType: 4, timeline: 4, productFit: 3, relationship: 1 },
+            interactions: [
+                { date: "2026-02-09", type: "inbound", title: "Instagram DM inquiry", description: "Saw our brackets on a Destin beach house post. Wants similar for her home." }
+            ],
+            notes: "Individual homeowner. Coastal location but very small scope. Might refer to a contractor."
+        },
+        {
+            id: 11,
+            firstName: "Kenneth", lastName: "Blackwell",
+            email: "k.blackwell@blackwellarch.com", phone: "(242) 555-0412",
+            company: "Blackwell Architecture", role: "Managing Partner",
+            professionalType: "architect",
+            projectType: "Boutique Hotel", location: "Nassau, Bahamas",
+            estimatedBudget: 340000, timeline: "Q2 2026", timelineUrgency: "high",
+            productsInterested: ["Column Wraps", "Exterior Moulding", "Louvers", "Stain Series Ceiling"],
+            sqFootage: 6800,
+            status: "qualified", dateAdded: "2025-12-15", leadScore: 91,
+            scoreBreakdown: { budget: 20, location: 18, professionalType: 20, timeline: 14, productFit: 13, relationship: 6 },
+            interactions: [
+                { date: "2025-12-15", type: "inbound", title: "Website inquiry — international", description: "Designing boutique hotel in Nassau. Needs salt-resistant exterior materials." },
+                { date: "2025-12-18", type: "call", title: "International consultation", description: "Discussed shipping logistics to Bahamas. 28-room boutique hotel." },
+                { date: "2026-01-10", type: "email", title: "Product samples shipped", description: "Sent comprehensive sample package via international courier." },
+                { date: "2026-01-30", type: "meeting", title: "Video call design review", description: "Reviewed elevations. British Colonial architectural style." },
+                { date: "2026-02-07", type: "call", title: "Budget alignment call", description: "Confirmed $340K budget. Preparing formal specification." }
+            ],
+            notes: "International project. Referred Maria Santos. Strong design relationship."
+        },
+        {
+            id: 12,
+            firstName: "Patricia", lastName: "Dumont",
+            email: "pdumont@gulfcoastgc.com", phone: "(239) 555-0563",
+            company: "Gulf Coast Contractors", role: "Estimator",
+            professionalType: "contractor",
+            projectType: "Retirement Community Clubhouse", location: "Naples, FL",
+            estimatedBudget: 88000, timeline: "Q3 2026", timelineUrgency: "medium",
+            productsInterested: ["Column Wraps", "Exterior Moulding"],
+            sqFootage: 2000,
+            status: "contacted", dateAdded: "2026-01-18", leadScore: 63,
+            scoreBreakdown: { budget: 10, location: 18, professionalType: 13, timeline: 8, productFit: 8, relationship: 6 },
+            interactions: [
+                { date: "2026-01-18", type: "inbound", title: "Email RFQ", description: "Requested pricing for column wraps and moulding for community clubhouse." },
+                { date: "2026-01-22", type: "email", title: "Pricing response sent", description: "Provided line-item pricing for specified products." },
+                { date: "2026-02-04", type: "call", title: "Technical questions call", description: "Discussed installation requirements. Comparing with fiber cement options." }
+            ],
+            notes: "Competitive bid situation. Need to emphasize long-term maintenance savings."
+        },
+        {
+            id: 13,
+            firstName: "Steven", lastName: "Nakamura",
+            email: "snakamura@horizonarch.com", phone: "(912) 555-0289",
+            company: "Horizon Architects", role: "Senior Designer",
+            professionalType: "architect",
+            projectType: "Waterfront Restaurant", location: "Savannah, GA",
+            estimatedBudget: 47000, timeline: "Q3 2026", timelineUrgency: "low",
+            productsInterested: ["Pergola Systems", "Decorative Brackets"],
+            sqFootage: 1200,
+            status: "new", dateAdded: "2026-02-04", leadScore: 52,
+            scoreBreakdown: { budget: 6, location: 15, professionalType: 17, timeline: 6, productFit: 6, relationship: 2 },
+            interactions: [
+                { date: "2026-02-04", type: "inbound", title: "Website form submission", description: "Designing riverfront restaurant. Interested in pergola systems for outdoor dining." },
+                { date: "2026-02-07", type: "email", title: "Product literature sent", description: "Emailed pergola and bracket catalogs with restaurant project references." }
+            ],
+            notes: "New contact. Moderate scope but good architect relationship potential."
+        },
+        {
+            id: 14,
+            firstName: "Laura", lastName: "Whitmore",
+            email: "laura@whitmoreassoc.com", phone: "(904) 555-0175",
+            company: "Whitmore & Associates", role: "Architect",
+            professionalType: "architect",
+            projectType: "Coastal Wedding Venue", location: "Amelia Island, FL",
+            estimatedBudget: 156000, timeline: "Q2 2026", timelineUrgency: "high",
+            productsInterested: ["Pergola Systems", "Column Wraps", "Decorative Brackets", "Trellis Systems"],
+            sqFootage: 3500,
+            status: "qualified", dateAdded: "2026-01-05", leadScore: 82,
+            scoreBreakdown: { budget: 16, location: 20, professionalType: 18, timeline: 14, productFit: 11, relationship: 3 },
+            interactions: [
+                { date: "2026-01-05", type: "inbound", title: "Phone call inquiry", description: "Designing oceanfront wedding venue. Needs elegant pergolas and columns." },
+                { date: "2026-01-10", type: "call", title: "Design consultation", description: "Discussed architectural vision. Grand entry columns and ceremony pergola." },
+                { date: "2026-01-20", type: "email", title: "Custom design concepts", description: "Sent 3D renderings of custom pergola and column configurations." },
+                { date: "2026-02-03", type: "meeting", title: "Client presentation", description: "Presented designs to venue owners with architect. Very well received." }
+            ],
+            notes: "Beautiful project. Great for portfolio if we win it."
+        },
+        {
+            id: 15,
+            firstName: "Derek", lastName: "Fontaine",
+            email: "derek@fontaineluxury.com", phone: "(649) 555-0834",
+            company: "Fontaine Luxury Builders", role: "President",
+            professionalType: "builder",
+            projectType: "Private Island Residence", location: "Turks & Caicos",
+            estimatedBudget: 495000, timeline: "Q1 2026", timelineUrgency: "high",
+            productsInterested: ["Column Wraps", "Exterior Moulding", "Pergola Systems", "Stain Series Ceiling", "Louvers"],
+            sqFootage: 9200,
+            status: "proposal", dateAdded: "2025-11-15", leadScore: 95,
+            scoreBreakdown: { budget: 20, location: 18, professionalType: 17, timeline: 15, productFit: 15, relationship: 10 },
+            interactions: [
+                { date: "2025-11-15", type: "inbound", title: "Direct referral", description: "Referred by previous client. Building private island estate in Turks & Caicos." },
+                { date: "2025-11-20", type: "call", title: "Executive introduction", description: "9,200 sqft estate. All-PVC exterior requirement due to extreme salt exposure." },
+                { date: "2025-12-10", type: "meeting", title: "Site visit to Turks & Caicos", description: "Flew to island to assess conditions and take measurements." },
+                { date: "2026-01-05", type: "email", title: "Comprehensive proposal delivered", description: "Full exterior millwork package proposal: $495K." },
+                { date: "2026-02-01", type: "call", title: "Final negotiations", description: "Minor scope adjustments. Expect signed contract within 2 weeks." }
+            ],
+            notes: "Premium client. Long-term relationship — 3 previous projects totaling $800K+."
+        },
+        {
+            id: 16,
+            firstName: "Michelle", lastName: "Torres",
+            email: "mtorres@torresdesign.com", phone: "(305) 555-0943",
+            company: "Torres Design Studio", role: "Interior Designer",
+            professionalType: "designer",
+            projectType: "Beachfront Condo Remodel", location: "Miami Beach, FL",
+            estimatedBudget: 28000, timeline: "Q4 2026", timelineUrgency: "low",
+            productsInterested: ["Decorative Brackets", "Exterior Moulding"],
+            sqFootage: 600,
+            status: "new", dateAdded: "2026-02-08", leadScore: 33,
+            scoreBreakdown: { budget: 4, location: 18, professionalType: 10, timeline: 4, productFit: 5, relationship: 1 },
+            interactions: [
+                { date: "2026-02-08", type: "inbound", title: "Email inquiry", description: "Looking for decorative exterior elements for balcony remodel." }
+            ],
+            notes: "Small condo remodel. Interior designer — limited exterior scope."
+        },
+        {
+            id: 17,
+            firstName: "Gregory", lastName: "Ashford",
+            email: "g.ashford@ashfordsons.com", phone: "(910) 555-0627",
+            company: "Ashford & Sons Construction", role: "Operations Manager",
+            professionalType: "contractor",
+            projectType: "Coastal Church Rebuild", location: "Wilmington, NC",
+            estimatedBudget: 73000, timeline: "Q2 2026", timelineUrgency: "medium",
+            productsInterested: ["Column Wraps", "Exterior Moulding", "Soffit Ceiling"],
+            sqFootage: 1800,
+            status: "contacted", dateAdded: "2026-01-25", leadScore: 58,
+            scoreBreakdown: { budget: 10, location: 18, professionalType: 13, timeline: 10, productFit: 9, relationship: 4 },
+            interactions: [
+                { date: "2026-01-25", type: "inbound", title: "Website inquiry", description: "Church rebuild after hurricane damage. Seeking durable exterior materials." },
+                { date: "2026-01-29", type: "call", title: "Needs assessment call", description: "Full exterior restoration. Insurance-funded project with defined budget." },
+                { date: "2026-02-06", type: "email", title: "Specification documents sent", description: "Provided product specs meeting building code requirements for coastal NC." }
+            ],
+            notes: "Insurance-funded project. Budget is firm. Community project with good PR value."
+        },
+        {
+            id: 18,
+            firstName: "Jennifer", lastName: "Caldwell",
+            email: "jcaldwell@caldwellcoastal.com", phone: "(843) 555-0391",
+            company: "Caldwell Coastal Architecture", role: "Principal",
+            professionalType: "architect",
+            projectType: "Multi-Property Resort Complex", location: "Kiawah Island, SC",
+            estimatedBudget: 375000, timeline: "Q2 2026", timelineUrgency: "high",
+            productsInterested: ["Stain Series Ceiling", "Column Wraps", "Exterior Moulding", "Rafter Tails", "Decorative Brackets"],
+            sqFootage: 7000,
+            status: "qualified", dateAdded: "2025-12-28", leadScore: 90,
+            scoreBreakdown: { budget: 20, location: 20, professionalType: 20, timeline: 14, productFit: 12, relationship: 4 },
+            interactions: [
+                { date: "2025-12-28", type: "inbound", title: "Professional dashboard signup", description: "Registered for professional account. Immediately downloaded CAD files." },
+                { date: "2026-01-03", type: "call", title: "Introduction call", description: "Designing 5-property resort complex on Kiawah. Lowcountry architectural style." },
+                { date: "2026-01-18", type: "meeting", title: "Design presentation", description: "Presented product options for Lowcountry design aesthetic." },
+                { date: "2026-02-05", type: "email", title: "Specification review", description: "Architect incorporating HB products into construction documents." },
+                { date: "2026-02-10", type: "call", title: "Scope refinement", description: "Finalizing product selections. Budget confirmed at $375K." }
+            ],
+            notes: "Top-tier architect. Kiawah Island projects are prestigious. Strong portfolio value."
+        }
+    ];
+
+    // ============ STATE ============
+    let currentTier = 'all';
+    let currentStatus = 'all';
+    let currentSearch = '';
+    let currentSort = { column: 'leadScore', direction: 'desc' };
+    let selectedLeadId = null;
+
+    // ============ HELPERS ============
+    function formatCurrency(amount) {
+        if (amount >= 1000000) return '$' + (amount / 1000000).toFixed(1) + 'M';
+        if (amount >= 1000) return '$' + (amount / 1000).toFixed(0) + 'K';
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+    }
+
+    function formatBudget(amount) {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+    }
+
+    function formatDate(dateStr) {
+        return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function formatDateLong(dateStr) {
+        return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function getScoreTier(score) {
+        if (score >= 70) return 'hot';
+        if (score >= 40) return 'warm';
+        return 'cold';
+    }
+
+    function getStatusLabel(status) {
+        const labels = { new: 'New', contacted: 'Contacted', qualified: 'Qualified', proposal: 'Proposal Sent', won: 'Won', lost: 'Lost' };
+        return labels[status] || status;
+    }
+
+    function getTimelineIcon(type) {
+        const icons = { inbound: 'fa-inbox', call: 'fa-phone', email: 'fa-envelope', meeting: 'fa-handshake', note: 'fa-note-sticky' };
+        return icons[type] || 'fa-circle';
+    }
+
+    const scoreFactorLabels = {
+        budget: { label: 'Project Budget', max: 20 },
+        location: { label: 'Location', max: 20 },
+        professionalType: { label: 'Professional Type', max: 20 },
+        timeline: { label: 'Timeline Urgency', max: 15 },
+        productFit: { label: 'Product Fit', max: 15 },
+        relationship: { label: 'Relationship', max: 10 }
+    };
+
+    // ============ FILTERING & SORTING ============
+    function getFilteredLeads() {
+        return leadsData.filter(lead => {
+            if (currentTier !== 'all' && getScoreTier(lead.leadScore) !== currentTier) return false;
+            if (currentStatus !== 'all' && lead.status !== currentStatus) return false;
+            if (currentSearch) {
+                const q = currentSearch.toLowerCase();
+                const fullName = (lead.firstName + ' ' + lead.lastName).toLowerCase();
+                const company = lead.company.toLowerCase();
+                if (!fullName.includes(q) && !company.includes(q)) return false;
+            }
+            return true;
+        }).sort((a, b) => {
+            const col = currentSort.column;
+            const dir = currentSort.direction === 'asc' ? 1 : -1;
+            let valA, valB;
+            if (col === 'name') {
+                valA = a.lastName.toLowerCase();
+                valB = b.lastName.toLowerCase();
+            } else if (col === 'company') {
+                valA = a.company.toLowerCase();
+                valB = b.company.toLowerCase();
+            } else if (col === 'budget') {
+                valA = a.estimatedBudget;
+                valB = b.estimatedBudget;
+            } else if (col === 'leadScore') {
+                valA = a.leadScore;
+                valB = b.leadScore;
+            } else if (col === 'dateAdded') {
+                valA = a.dateAdded;
+                valB = b.dateAdded;
+            } else {
+                return 0;
+            }
+            if (valA < valB) return -1 * dir;
+            if (valA > valB) return 1 * dir;
+            return 0;
+        });
+    }
+
+    // ============ TABLE RENDERING ============
+    function renderTable() {
+        const filtered = getFilteredLeads();
+        const tbody = document.getElementById('leadsTableBody');
+        tbody.innerHTML = '';
+
+        filtered.forEach(lead => {
+            const tier = getScoreTier(lead.leadScore);
+            const tr = document.createElement('tr');
+            tr.dataset.leadId = lead.id;
+            if (lead.id === selectedLeadId) tr.classList.add('selected');
+            tr.onclick = () => openDetailPanel(lead.id);
+
+            tr.innerHTML = `
+                <td>
+                    <div class="lead-name-cell">
+                        <span class="lead-name">${lead.firstName} ${lead.lastName}</span>
+                        <span class="lead-role">${lead.role}</span>
+                    </div>
+                </td>
+                <td>${lead.company}</td>
+                <td>${lead.projectType}</td>
+                <td class="location-cell">${lead.location}</td>
+                <td class="budget-cell">${formatBudget(lead.estimatedBudget)}</td>
+                <td><div class="score-circle ${tier}">${lead.leadScore}</div></td>
+                <td><span class="status-badge ${lead.status}">${getStatusLabel(lead.status)}</span></td>
+                <td class="date-cell">${formatDate(lead.dateAdded)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('leadCount').textContent = `Showing ${filtered.length} lead${filtered.length !== 1 ? 's' : ''}`;
+    }
+
+    // ============ DETAIL PANEL ============
+    function openDetailPanel(leadId) {
+        const lead = leadsData.find(l => l.id === leadId);
+        if (!lead) return;
+        selectedLeadId = leadId;
+
+        // Update header
+        document.getElementById('panelName').textContent = `${lead.firstName} ${lead.lastName}`;
+        const tier = getScoreTier(lead.leadScore);
+        const scoreEl = document.getElementById('panelScore');
+        scoreEl.className = `panel-score ${tier}`;
+        scoreEl.innerHTML = `<i class="fa-solid fa-chart-simple"></i> Score: ${lead.leadScore}/100`;
+
+        const statusEl = document.getElementById('panelStatus');
+        statusEl.className = `status-badge ${lead.status}`;
+        statusEl.textContent = getStatusLabel(lead.status);
+
+        document.getElementById('panelDate').textContent = `Added ${formatDate(lead.dateAdded)}`;
+
+        // Build body
+        const body = document.getElementById('panelBody');
+        body.innerHTML = `
+            <div class="panel-section">
+                <div class="panel-section-title">Contact Information</div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Name</span>
+                        <span class="info-value">${lead.firstName} ${lead.lastName}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">${lead.email}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value">${lead.phone}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Company</span>
+                        <span class="info-value">${lead.company}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Role</span>
+                        <span class="info-value">${lead.role}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Location</span>
+                        <span class="info-value">${lead.location}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <div class="panel-section-title">Project Details</div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Project Type</span>
+                        <span class="info-value">${lead.projectType}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Est. Budget</span>
+                        <span class="info-value">${formatBudget(lead.estimatedBudget)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Timeline</span>
+                        <span class="info-value">${lead.timeline}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Square Footage</span>
+                        <span class="info-value">${lead.sqFootage.toLocaleString()} sq ft</span>
+                    </div>
+                    <div class="info-item full-width">
+                        <span class="info-label">Products Interested</span>
+                        <div class="products-list">${lead.productsInterested.map(p => `<span class="product-tag">${p}</span>`).join('')}</div>
+                    </div>
+                    ${lead.notes ? `<div class="info-item full-width">
+                        <span class="info-label">Notes</span>
+                        <span class="info-value" style="font-weight:400;color:var(--brand-grey-dark);">${lead.notes}</span>
+                    </div>` : ''}
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <div class="panel-section-title">Qualification Score Breakdown</div>
+                <div class="score-breakdown">
+                    ${Object.entries(scoreFactorLabels).map(([key, meta]) => {
+                        const val = lead.scoreBreakdown[key];
+                        const pct = (val / meta.max) * 100;
+                        const color = pct >= 70 ? 'var(--color-hot)' : pct >= 40 ? 'var(--color-warm)' : 'var(--color-cold)';
+                        return `
+                            <div class="score-factor">
+                                <span class="factor-label">${meta.label}</span>
+                                <div class="factor-bar-track">
+                                    <div class="factor-bar-fill" data-width="${pct}" style="background:${color};"></div>
+                                </div>
+                                <span class="factor-score">${val}/${meta.max}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="total-score-row">
+                    <span class="total-score-label">Total Qualification Score</span>
+                    <span class="total-score-value" style="color:${tier === 'hot' ? 'var(--color-hot)' : tier === 'warm' ? 'var(--color-warm)' : 'var(--color-cold)'};">${lead.leadScore}/100</span>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <div class="panel-section-title">Interaction Timeline</div>
+                <div class="timeline">
+                    ${[...lead.interactions].reverse().map(int => `
+                        <div class="timeline-item">
+                            <div class="timeline-dot ${int.type}"><i class="fa-solid ${getTimelineIcon(int.type)}"></i></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">${formatDateLong(int.date)}</div>
+                                <div class="timeline-title">${int.title}</div>
+                                <div class="timeline-desc">${int.description}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        // Open panel
+        document.getElementById('detailOverlay').classList.add('open');
+        document.getElementById('detailPanel').classList.add('open');
+
+        // Animate score bars
+        setTimeout(() => {
+            body.querySelectorAll('.factor-bar-fill').forEach((bar, i) => {
+                setTimeout(() => {
+                    bar.style.width = bar.dataset.width + '%';
+                }, i * 80);
+            });
+        }, 200);
+
+        // Highlight selected row
+        renderTable();
+    }
+
+    function closeDetailPanel() {
+        document.getElementById('detailOverlay').classList.remove('open');
+        document.getElementById('detailPanel').classList.remove('open');
+        selectedLeadId = null;
+        renderTable();
+    }
+
+    // ============ CHARTS ============
+    function initCharts() {
+        // Lead Score Distribution
+        const hot = leadsData.filter(l => l.leadScore >= 70).length;
+        const warm = leadsData.filter(l => l.leadScore >= 40 && l.leadScore < 70).length;
+        const cold = leadsData.filter(l => l.leadScore < 40).length;
+
+        const scoreCtx = document.getElementById('leadScoreChart').getContext('2d');
+        new Chart(scoreCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Hot (70-100)', 'Warm (40-69)', 'Cold (0-39)'],
+                datasets: [{
+                    data: [hot, warm, cold],
+                    backgroundColor: ['#22C55E', '#F59E0B', '#EF4444'],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '68%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1A1D23',
+                        titleFont: { family: 'Inter', weight: '600', size: 13 },
+                        bodyFont: { family: 'Inter', size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(ctx) {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct = ((ctx.parsed / total) * 100).toFixed(1);
+                                return ` ${ctx.parsed} leads (${pct}%)`;
+                            }
+                        }
+                    }
+                },
+                animation: { animateRotate: true, animateScale: true, duration: 1000, easing: 'easeOutQuart' }
+            },
+            plugins: [{
+                id: 'centerText',
+                afterDraw(chart) {
+                    const { ctx: c, chartArea: { width, height, top, left } } = chart;
+                    c.save();
+                    const centerX = left + width / 2;
+                    const centerY = top + height / 2;
+                    c.font = '700 28px Inter';
+                    c.fillStyle = '#1A1D23';
+                    c.textAlign = 'center';
+                    c.textBaseline = 'middle';
+                    c.fillText(leadsData.length, centerX, centerY - 10);
+                    c.font = '400 12px Inter';
+                    c.fillStyle = '#6D6D6D';
+                    c.fillText('Total Leads', centerX, centerY + 14);
+                    c.restore();
+                }
+            }]
+        });
+
+        // Custom legend
+        document.getElementById('scoreLegend').innerHTML = `
+            <div class="legend-item"><div class="legend-dot" style="background:#22C55E;"></div> Hot (70-100): ${hot} leads</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#F59E0B;"></div> Warm (40-69): ${warm} leads</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#EF4444;"></div> Cold (0-39): ${cold} leads</div>
+        `;
+
+        // Pipeline Chart
+        const statusCounts = {
+            new: leadsData.filter(l => l.status === 'new').length,
+            contacted: leadsData.filter(l => l.status === 'contacted').length,
+            qualified: leadsData.filter(l => l.status === 'qualified').length,
+            proposal: leadsData.filter(l => l.status === 'proposal').length,
+            won: leadsData.filter(l => l.status === 'won').length,
+            lost: leadsData.filter(l => l.status === 'lost').length,
+        };
+
+        const pipeCtx = document.getElementById('pipelineChart').getContext('2d');
+        new Chart(pipeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['New', 'Contacted', 'Qualified', 'Proposal Sent', 'Won', 'Lost'],
+                datasets: [{
+                    data: [statusCounts.new, statusCounts.contacted, statusCounts.qualified, statusCounts.proposal, statusCounts.won, statusCounts.lost],
+                    backgroundColor: ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#10B981', '#6B7280'],
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    barThickness: 28
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { color: '#F0F2F5' },
+                        ticks: { font: { family: 'Inter', size: 12 }, stepSize: 1 },
+                        beginAtZero: true
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Inter', weight: '500', size: 12 } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1A1D23',
+                        titleFont: { family: 'Inter', weight: '600', size: 13 },
+                        bodyFont: { family: 'Inter', size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(ctx) {
+                                return ` ${ctx.parsed.x} leads`;
+                            }
+                        }
+                    }
+                },
+                animation: { duration: 800, easing: 'easeOutQuart' }
+            }
+        });
+    }
+
+    // ============ EVENT LISTENERS ============
+    function attachEventListeners() {
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTier = btn.dataset.tier;
+                renderTable();
+            });
+        });
+
+        // Status filter
+        document.getElementById('statusFilter').addEventListener('change', (e) => {
+            currentStatus = e.target.value;
+            renderTable();
+        });
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            renderTable();
+        });
+
+        // Sort headers
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const col = th.dataset.column;
+                if (currentSort.column === col) {
+                    currentSort.direction = currentSort.direction === 'desc' ? 'asc' : 'desc';
+                } else {
+                    currentSort = { column: col, direction: 'desc' };
+                }
+                // Update header icons
+                document.querySelectorAll('th.sortable').forEach(h => {
+                    h.classList.remove('sorted');
+                    h.querySelector('.sort-icon').className = 'fa-solid fa-sort sort-icon';
+                });
+                th.classList.add('sorted');
+                th.querySelector('.sort-icon').className = `fa-solid fa-sort-${currentSort.direction === 'asc' ? 'up' : 'down'} sort-icon`;
+                renderTable();
+            });
+        });
+
+        // Detail panel close
+        document.getElementById('closePanel').addEventListener('click', closeDetailPanel);
+        document.getElementById('detailOverlay').addEventListener('click', closeDetailPanel);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeDetailPanel();
+        });
+    }
+
+    // ============ ANIMATIONS ============
+    function animateOnLoad() {
+        // KPI Cards
+        document.querySelectorAll('.kpi-card').forEach(card => {
+            const delay = parseInt(card.dataset.delay) || 0;
+            setTimeout(() => card.classList.add('visible'), 200 + delay);
+        });
+
+        // Chart cards
+        document.querySelectorAll('.chart-card').forEach(card => {
+            const delay = parseInt(card.dataset.delay) || 0;
+            setTimeout(() => card.classList.add('visible'), 200 + delay);
+        });
+
+        // Table card
+        document.querySelectorAll('.table-card').forEach(card => {
+            const delay = parseInt(card.dataset.delay) || 0;
+            setTimeout(() => card.classList.add('visible'), 200 + delay);
+        });
+    }
+
+    // ============ INIT ============
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable();
+        initCharts();
+        attachEventListeners();
+        animateOnLoad();
+    });
+    </script>
+</body>
+</html>
