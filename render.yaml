@@ -3,4 +3,4 @@ services:
     name: hb-elements-lead-dashboard
     runtime: static
     buildCommand: ""
-    staticPublishPath: ./public
+    staticPublishPath: ./docs
